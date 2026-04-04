@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Joy Thru Fitness</title>
+  <meta name="description" content="JOY Thru Fitness customizes plans to empower our clients to take control of their lifestyles. Personal training, group classes, triathlon coaching in Tampa Bay." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #4caf50;
+      --green-dark: #388e3c;
+      --green-light: #81c784;
+      --black: #111111;
+      --dark: #1a1a1a;
+      --mid: #2c2c2c;
+      --gray: #555555;
+      --light-gray: #f4f4f4;
+      --white: #ffffff;
+      --accent: #ff6b35;
+      --font-head: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--black);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      background: rgba(17,17,17,0.95);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 64px;
+    }
+
+    .nav-logo img {
+      height: 40px;
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--green); }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: white;
+      transition: 0.3s;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.7) 100%),
+        url('https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/62ebe0a1f07bcb59f394f886_pexels-ketut-subiyanto-5039523.jpg') center/cover no-repeat;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      padding: 0 24px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+
+    .hero-content h1 {
+      font-family: var(--font-head);
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 800;
+      line-height: 0.95;
+      text-transform: uppercase;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      margin-bottom: 36px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 2px;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--green-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 2px solid rgba(255,255,255,0.6);
+    }
+
+    .btn-outline:hover {
+      border-color: white;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ── SECTION SHARED ── */
+    section { scroll-margin-top: 64px; }
+
+    .section-label {
+      font-family: var(--font-head);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 800;
+      line-height: 1.05;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ── MISSION ── */
+    #mission {
+      background: var(--light-gray);
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    #mission .section-title {
+      max-width: 760px;
+      margin: 0 auto;
+      color: var(--dark);
+    }
+
+    /* ── PERSONAL TRAINING ── */
+    #personal-training {
+      padding: 96px 0;
+      background: white;
+    }
+
+    .split-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .split-layout.reverse { direction: rtl; }
+    .split-layout.reverse > * { direction: ltr; }
+
+    .split-text { }
+
+    .split-text .section-title {
+      margin-bottom: 20px;
+      color: var(--dark);
+    }
+
+    .split-text p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+
+    .split-text ul {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+
+    .split-text ul li {
+      font-size: 15px;
+      color: var(--gray);
+      padding: 6px 0 6px 22px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .split-text ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 14px;
+      width: 8px;
+      height: 2px;
+      background: var(--green);
+    }
+
+    .split-image img {
+      width: 100%;
+      height: 520px;
+      object-fit: cover;
+      border-radius: 4px;
+      display: block;
+    }
+
+    /* ── TIME 4 U ── */
+    #online-programs {
+      padding: 96px 0;
+      background: var(--dark);
+      color: white;
+    }
+
+    #online-programs .section-label { color: var(--green-light); }
+    #online-programs .section-title { color: white; margin-bottom: 16px; }
+
+    #online-programs p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.7);
+      max-width: 640px;
+      margin-bottom: 8px;
+    }
+
+    .t4u-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+      margin-top: 16px;
+    }
+
+    .t4u-features {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+
+    .t4u-features li {
+      font-size: 15px;
+      color: rgba(255,255,255,0.85);
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      line-height: 1.5;
+    }
+
+    .t4u-image img {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .t4u-note {
+      font-size: 15px !important;
+      color: rgba(255,255,255,0.6) !important;
+      font-style: italic;
+    }
+
+    /* ── GROUP CLASSES ── */
+    #dua-tri {
+      padding: 96px 0;
+      background: white;
+    }
+
+    .classes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .class-card {
+      padding: 24px 0;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .class-card:last-child { border-bottom: none; }
+
+    .class-card h4 {
+      font-family: var(--font-head);
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .class-card p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--gray);
+    }
+
+    .classes-image img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .classes-price-note {
+      display: inline-block;
+      background: var(--green);
+      color: white;
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 2px;
+      margin-bottom: 28px;
+    }
+
+    /* ── PAYMENT ── */
+    .payment-bar {
+      background: var(--light-gray);
+      padding: 40px 0;
+    }
+
+    .payment-bar .container {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .payment-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .payment-item img { height: 32px; }
+
+    .payment-item span {
+      font-size: 15px;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    /* ── PRICING ── */
+    #pricing {
+      padding: 96px 0;
+      background: var(--black);
+      color: white;
+    }
+
+    #pricing .section-label { color: var(--green-light); }
+    #pricing .section-title { color: white; margin-bottom: 64px; }
+
+    .pricing-block {
+      margin-bottom: 72px;
+    }
+
+    .pricing-block-title {
+      font-family: var(--font-head);
+      font-size: 28px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: white;
+      margin-bottom: 8px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .pricing-note {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .price-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 24px;
+    }
+
+    .price-card-label {
+      font-family: var(--font-head);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green-light);
+      margin-bottom: 12px;
+    }
+
+    .price-card-title {
+      font-family: var(--font-head);
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      font-size: 14px;
+    }
+
+    .price-row:last-child { border-bottom: none; }
+
+    .price-row-label { color: rgba(255,255,255,0.6); }
+
+    .price-row-value {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .price-card-amount {
+      font-family: var(--font-head);
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .price-card-period {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 16px;
+    }
+
+    .price-card-features {
+      list-style: none;
+    }
+
+    .price-card-features li {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      line-height: 1.4;
+    }
+
+    .price-card-features li:last-child { border-bottom: none; }
+
+    .price-card.featured {
+      border-color: var(--green);
+      background: rgba(76,175,80,0.08);
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      padding: 96px 0;
+      background: var(--light-gray);
+    }
+
+    #about .split-layout {
+      align-items: start;
+    }
+
+    /* ── TRAINERS ── */
+    #trainers {
+      padding: 96px 0;
+      background: white;
+    }
+
+    .trainers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 56px;
+    }
+
+    .trainer-card { }
+
+    .trainer-photo {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 4px;
+      display: block;
+      margin-bottom: 24px;
+    }
+
+    .trainer-name {
+      font-family: var(--font-head);
+      font-size: 26px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+
+    .trainer-role {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+
+    .trainer-bio {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--gray);
+      margin-bottom: 24px;
+    }
+
+    .trainer-meta { margin-bottom: 20px; }
+
+    .trainer-meta-item {
+      margin-bottom: 12px;
+    }
+
+    .trainer-meta-item strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dark);
+      margin-bottom: 2px;
+    }
+
+    .trainer-meta-item span {
+      font-size: 14px;
+      color: var(--gray);
+    }
+
+    .certifications-title {
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .certifications-list {
+      list-style: none;
+    }
+
+    .certifications-list li {
+      font-size: 13px;
+      color: var(--gray);
+      padding: 4px 0 4px 16px;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .certifications-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 6px;
+      height: 2px;
+      background: var(--green);
+    }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials {
+      padding: 96px 0;
+      background: var(--dark);
+      color: white;
+    }
+
+    #testimonials .section-label { color: var(--green-light); }
+    #testimonials .section-title { color: white; margin-bottom: 56px; }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .testimonial-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      padding: 28px;
+    }
+
+    .testimonial-quote {
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 20px;
+    }
+
+    .testimonial-quote::before {
+      content: '"';
+      font-family: var(--font-head);
+      font-size: 48px;
+      line-height: 0;
+      color: var(--green);
+      display: block;
+      margin-bottom: 16px;
+      margin-top: 10px;
+    }
+
+    .testimonial-author {
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green-light);
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      padding: 96px 0;
+      background: var(--light-gray);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .contact-info .section-title { margin-bottom: 24px; }
+
+    .contact-info p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--gray);
+      margin-bottom: 32px;
+    }
+
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .contact-detail span:first-child {
+      width: 36px;
+      height: 36px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .contact-detail a, .contact-detail span:last-child {
+      font-size: 15px;
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .contact-detail a:hover { color: var(--green); }
+
+    .contact-form { }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 2px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--dark);
+      background: white;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--green);
+    }
+
+    .form-group textarea { resize: vertical; min-height: 120px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-success {
+      display: none;
+      background: var(--green);
+      color: white;
+      padding: 16px;
+      border-radius: 4px;
+      font-size: 15px;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black);
+      color: white;
+      padding: 48px 0 32px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+
+    .footer-logo img { height: 48px; }
+
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer-nav a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-nav a:hover { color: var(--green); }
+
+    .footer-phone {
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .footer-copy {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 24px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.35);
+      text-align: center;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: rgba(17,17,17,0.98); padding: 20px 32px; gap: 16px; }
+      .nav-links.open { display: flex; }
+      .nav-toggle { display: flex; }
+      .split-layout, .split-layout.reverse, .classes-grid, .t4u-grid, .contact-grid { grid-template-columns: 1fr; direction: ltr; }
+      .split-image img, .classes-image img, .t4u-image img { height: 280px; }
+      .trainers-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 560px) {
+      .pricing-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      nav { padding: 0 20px; }
+      .container { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">
+      <img src="https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/631b9b3f3a67443fe3b99e37_jtf-logo.png" alt="JOY Thru Fitness" />
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#personal-training">Personal Training</a></li>
+      <li><a href="#online-programs">Online Programs</a></li>
+      <li><a href="#dua-tri">Group Classes</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#trainers">Trainers</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">JOY Thru Fitness</p>
+      <h1>Your Journey to Better Health and Fitness</h1>
+      <div class="hero-ctas">
+        <a href="#about" class="btn btn-outline">Learn More</a>
+        <a href="#pricing" class="btn btn-primary">Plans &amp; Pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section id="mission">
+    <div class="container">
+      <p class="section-label">Mission</p>
+      <h2 class="section-title">JOY Thru Fitness customizes plans to empower our clients to take control of their lifestyles</h2>
+    </div>
+  </section>
+
+  <!-- PERSONAL TRAINING -->
+  <section id="personal-training">
+    <div class="container">
+      <div class="split-layout">
+        <div class="split-text">
+          <p class="section-label">Personal Training</p>
+          <h2 class="section-title">Should I hire a personal trainer?</h2>
+          <p>Hiring a personal trainer is essential. The benefits are remarkable as they go a long way to guarantee that you reach your health and fitness goals. Some people initially get turned off to hiring a personal trainer when they reflect upon the cost or the fear of a trainer pushing them too hard.</p>
+          <p>We support, motivate, and guide you through this transformative journey.</p>
+          <p><strong>Our training includes:</strong></p>
+          <ul>
+            <li>Paying close attention to individual training programs and their nutrition habits such as customized programs</li>
+            <li>Arranging fitness assessments to measure strength and imbalances</li>
+            <li>Addressing fitness level and desired goals</li>
+            <li>Accountability</li>
+            <li>Form correction</li>
+            <li>Weekly flexibility and strength plans</li>
+            <li>Nutrition advice and goal setting</li>
+            <li>Unconditional professionalism to help you progress in developing a healthy lifestyle</li>
+          </ul>
+          <a href="#pricing" class="btn btn-primary">Sign Up Today</a>
+        </div>
+        <div class="split-image">
+          <img src="https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/62ebe0a1f07bcb59f394f886_pexels-ketut-subiyanto-5039523.jpg" alt="Personal Training session" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIME 4 U / ONLINE PROGRAMS -->
+  <section id="online-programs">
+    <div class="container">
+      <p class="section-label">Time 4 U</p>
+      <h2 class="section-title">Because lasting change starts when you finally make time for YOU.</h2>
+      <div class="t4u-grid">
+        <div>
+          <p>Life is full — but your health doesn't have to take a back seat. The <strong>TIME 4 U Online Program</strong> is designed for busy men and women who want structure, accountability, and expert coaching — all from the comfort of their own space. No more guessing. No more starting over every Monday. Just a clear plan and consistent support to help you lose weight, build strength, and create a lifestyle that lasts.</p>
+          <p><strong>You'll receive:</strong></p>
+          <ul class="t4u-features">
+            <li>✅ <strong>Customized Workouts</strong> — Tailored to your goals, fitness level, and schedule</li>
+            <li>✅ <strong>Weekly Check-Ins</strong> — Keep your progress on track with personalized feedback</li>
+            <li>✅ <strong>Nutrition Coaching</strong> — Learn how to fuel your body without restriction or fad diets</li>
+            <li>✅ <strong>24/6 Access to Your Coach</strong> — Support when you need it most</li>
+            <li>✅ <strong>Private WhatsApp Community</strong> — Daily encouragement, accountability, and motivation</li>
+            <li>✅ <strong>Monthly Team Zoom Calls</strong> — Celebrate wins and focused topic coaching</li>
+            <li>✅ <strong>Time Management Strategies</strong> — Fit fitness into real life, not the other way around</li>
+            <li>✅ <strong>Mindset Coaching</strong> — Build lasting habits and break free from the all-or-nothing cycle</li>
+            <li>✅ <strong>Monthly Challenges</strong> — To keep you motivated, consistent and having fun</li>
+          </ul>
+          <p class="t4u-note">This isn't a quick fix. It's a proven system to help you show up consistently, rebuild your confidence, and take back your health — one habit at a time.</p>
+          <br />
+          <p><strong>Ready to get started?</strong> Email <a href="mailto:info@joythrufitness.com?subject=Time%204%20U%20Inquiry" style="color:var(--green-light)">info@joythrufitness.com</a></p>
+        </div>
+        <div class="t4u-image">
+          <img src="https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/68e144d63737d6273bbb12c0_1000007019.jpg" alt="Time 4 U Online Program" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GROUP CLASSES -->
+  <section id="dua-tri">
+    <div class="container">
+      <div class="classes-grid">
+        <div>
+          <p class="section-label">Group Classes</p>
+          <h2 class="section-title">Exceed Your Expectations</h2>
+          <span class="classes-price-note">$18 until May 5th · $20 after</span>
+
+          <div class="class-card">
+            <h4>Full Bodyweight Workout</h4>
+            <p>The most effective way to boost your metabolism, burn body fat, gain strength with a variety of movements that work the major muscle groups. This class is for all fitness levels.</p>
+          </div>
+          <div class="class-card">
+            <h4>Core and More</h4>
+            <p>This circuit style class will move you in different directions to improve balance, core stability, posture, fall prevention and improve cardiovascular fitness. This class is for all fitness levels.</p>
+          </div>
+          <div class="class-card">
+            <h4>Mat Pilates</h4>
+            <p>Strongly core centric, Pilates is about lengthening, strengthening, and stability. Every movement originates from the core. Benefits include increased joint mobility, flexibility, balance, strength and endurance, and improving posture. Grip socks and a mat are recommended.</p>
+          </div>
+          <div class="class-card">
+            <h4>Total Body Pump</h4>
+            <p>A circuit style class, Pump is a dynamic, metabolic workout designed to combine aerobic activity with strength training, burning fat and increasing muscle strength and endurance. This is a more challenging class but with modifications still appropriate for all levels.</p>
+          </div>
+          <div class="class-card">
+            <h4>Aqua Aerobics</h4>
+            <p>A total body class focusing on cardio and strength. Benefits include improved balance and coordination, core stability, increased metabolism, less impact on joints, improved posture, and decreased stress. It's fun, social, and ideal for everyone. Aqua shoes required.</p>
+          </div>
+          <br />
+          <a href="https://www.vagaro.com/joythrufitness/classes" class="btn btn-primary" target="_blank" rel="noopener">See Schedules</a>
+        </div>
+        <div class="classes-image">
+          <img src="https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/6436bd3242ce6950fa77d39f_group-class-image.jpg" alt="Group fitness class" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENT -->
+  <div class="payment-bar">
+    <div class="container">
+      <div class="payment-item">
+        <img src="https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/632a69f5018137f4752406ad_Venmo-Logo.png" alt="Venmo" />
+        <span>@Heather-Downs76</span>
+      </div>
+      <div class="payment-item">
+        <img src="https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/632a748bd018c2ba32f56e14_Zelle-logo.png" alt="Zelle" />
+        <span>(386) 481-8225</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="container">
+      <p class="section-label">Pricing</p>
+      <h2 class="section-title">Find Your Plan</h2>
+
+      <!-- Personal Training -->
+      <div class="pricing-block">
+        <h3 class="pricing-block-title">Personal Training</h3>
+        <p class="pricing-note">Consult: 1 hour FREE · Over 1 hour: $30 per 30 minutes</p>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-card-label">1x per week</div>
+            <div class="price-card-title">Individual</div>
+            <div class="price-row"><span class="price-row-label">60 min</span><span class="price-row-value">$76</span></div>
+            <div class="price-row"><span class="price-row-label">45 min</span><span class="price-row-value">$59</span></div>
+            <div class="price-row"><span class="price-row-label">30 min</span><span class="price-row-value">$45</span></div>
+          </div>
+          <div class="price-card">
+            <div class="price-card-label">2x per week</div>
+            <div class="price-card-title">Individual</div>
+            <div class="price-row"><span class="price-row-label">60 min</span><span class="price-row-value">$70</span></div>
+            <div class="price-row"><span class="price-row-label">45 min</span><span class="price-row-value">$54</span></div>
+            <div class="price-row"><span class="price-row-label">30 min</span><span class="price-row-value">$43</span></div>
+          </div>
+          <div class="price-card">
+            <div class="price-card-label">3x per week</div>
+            <div class="price-card-title">Individual</div>
+            <div class="price-row"><span class="price-row-label">60 min</span><span class="price-row-value">$65</span></div>
+            <div class="price-row"><span class="price-row-label">45 min</span><span class="price-row-value">$48</span></div>
+            <div class="price-row"><span class="price-row-label">30 min</span><span class="price-row-value">$37</span></div>
+          </div>
+          <div class="price-card">
+            <div class="price-card-label">4x per week</div>
+            <div class="price-card-title">Individual</div>
+            <div class="price-row"><span class="price-row-label">60 min</span><span class="price-row-value">$59</span></div>
+            <div class="price-row"><span class="price-row-label">45 min</span><span class="price-row-value">$46</span></div>
+            <div class="price-row"><span class="price-row-label">30 min</span><span class="price-row-value">$34</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1 Hour Specials -->
+      <div class="pricing-block">
+        <h3 class="pricing-block-title">Personal Training — 1 Hour Specials</h3>
+        <p class="pricing-note">1 Hour Only · Prepaid · Limited Time</p>
+        <div class="pricing-grid">
+          <div class="price-card featured">
+            <div class="price-card-label">1x per week · 12 sessions</div>
+            <div class="price-card-title">3 Months Mega Deal</div>
+            <div class="price-card-amount">$779</div>
+          </div>
+          <div class="price-card featured">
+            <div class="price-card-label">2x per week · 24 sessions</div>
+            <div class="price-card-title">3 Months Mega Deal</div>
+            <div class="price-card-amount">$1,465</div>
+          </div>
+          <div class="price-card featured">
+            <div class="price-card-label">3x per week · 36 sessions</div>
+            <div class="price-card-title">3 Months Mega Deal</div>
+            <div class="price-card-amount">$2,099</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Training -->
+      <div class="pricing-block">
+        <h3 class="pricing-block-title">Team Training — Monthly</h3>
+        <p class="pricing-note">Split between two people</p>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-card-label">1x per week</div>
+            <div class="price-card-title">Team</div>
+            <div class="price-row"><span class="price-row-label">30 min</span><span class="price-row-value">$274</span></div>
+            <div class="price-row"><span class="price-row-label">45 min</span><span class="price-row-value">$329</span></div>
+            <div class="price-row"><span class="price-row-label">60 min</span><span class="price-row-value">$384</span></div>
+          </div>
+          <div class="price-card">
+            <div class="price-card-label">2x per week</div>
+            <div class="price-card-title">Team</div>
+            <div class="price-row"><span class="price-row-label">30 min</span><span class="price-row-value">$431</span></div>
+            <div class="price-row"><span class="price-row-label">45 min</span><span class="price-row-value">$647</span></div>
+            <div class="price-row"><span class="price-row-label">60 min</span><span class="price-row-value">$699</span></div>
+          </div>
+          <div class="price-card">
+            <div class="price-card-label">3x per week</div>
+            <div class="price-card-title">Team</div>
+            <div class="price-row"><span class="price-row-label">30 min</span><span class="price-row-value">$594</span></div>
+            <div class="price-row"><span class="price-row-label">45 min</span><span class="price-row-value">$783</span></div>
+            <div class="price-row"><span class="price-row-label">60 min</span><span class="price-row-value">$989</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOY Thru Triathlon -->
+      <div class="pricing-block">
+        <h3 class="pricing-block-title">JOY Thru Triathlon</h3>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-card-label">Basic</div>
+            <div class="price-card-amount">$175</div>
+            <div class="price-card-period">per month</div>
+            <ul class="price-card-features">
+              <li>Communication with Coach</li>
+              <li>Daily TrainingPeaks communication</li>
+              <li>Bi-weekly plans written</li>
+              <li>Zoom call once a month for race/event prep</li>
+            </ul>
+          </div>
+          <div class="price-card featured">
+            <div class="price-card-label">Gold</div>
+            <div class="price-card-amount">$225</div>
+            <div class="price-card-period">per month</div>
+            <ul class="price-card-features">
+              <li>Daily communication with Coach</li>
+              <li>Planning weekly including schedule changes</li>
+              <li>Customized weekly plan + functional strength training</li>
+              <li>TrainingPeaks data analysis daily</li>
+              <li>Monthly Zoom 45 min — goals, planning, etc.</li>
+              <li>Nutrition consulting &amp; periodization</li>
+              <li>Race event/prep</li>
+            </ul>
+          </div>
+          <div class="price-card">
+            <div class="price-card-label">Platinum</div>
+            <div class="price-card-amount">$285</div>
+            <div class="price-card-period">per month</div>
+            <ul class="price-card-features">
+              <li>Unlimited communication with Coach</li>
+              <li>Unlimited planning including schedule changes</li>
+              <li>Customized weekly plan + functional strength training</li>
+              <li>1 in-person session/month — biomechanics analysis</li>
+              <li>Fitness &amp; Skill Assessments included</li>
+              <li>TrainingPeaks data analysis daily</li>
+              <li>Monthly Zoom 45 min</li>
+              <li>Nutrition consulting &amp; periodization</li>
+              <li>Race event/prep</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Swim Cycling Running -->
+      <div class="pricing-block">
+        <h3 class="pricing-block-title">Swim, Cycling &amp; Running</h3>
+        <p class="pricing-note">Video analysis included · Video Analysis Only: $40</p>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-card-label">1x per week</div>
+            <div class="price-card-title">Individual</div>
+            <div class="price-row"><span class="price-row-label">60 min</span><span class="price-row-value">$76</span></div>
+            <div class="price-row"><span class="price-row-label">45 min</span><span class="price-row-value">$59</span></div>
+            <div class="price-row"><span class="price-row-label">30 min</span><span class="price-row-value">$48</span></div>
+          </div>
+          <div class="price-card">
+            <div class="price-card-label">2x per week</div>
+            <div class="price-card-title">Individual</div>
+            <div class="price-row"><span class="price-row-label">60 min</span><span class="price-row-value">$72</span></div>
+            <div class="price-row"><span class="price-row-label">45 min</span><span class="price-row-value">$43</span></div>
+            <div class="price-row"><span class="price-row-label">30 min</span><span class="price-row-value">$55</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="split-layout">
+        <div class="split-text">
+          <p class="section-label">About</p>
+          <h2 class="section-title">Our passion is to give others their lives back</h2>
+          <p>Heather had a dream of having her own Training business. Her vision is to help clients be successful in their training by providing excellent customer service, passion, and knowledge. Our business, JOY Thru Fitness, started six years ago.</p>
+          <p>We are Traveling Trainers passionate about helping clients of all ages and ethnicities live healthier lifestyles. Our intent behind traveling to you is that convenience is half the battle!</p>
+          <p>JOY Thru Fitness enjoys training youth to older adults. Our clients enjoy training with us because of our ethics, transparency, knowledge, and passion for helping others. We believe in being transparent, punctual, and ethical when making decisions.</p>
+          <a href="#trainers" class="btn btn-primary">Meet the Team</a>
+        </div>
+        <div class="split-image">
+          <img src="https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/6436bd3242ce6950fa77d39f_group-class-image.jpg" alt="About JOY Thru Fitness" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAINERS -->
+  <section id="trainers">
+    <div class="container">
+      <p class="section-label">Trainers</p>
+      <h2 class="section-title">Knowledge and experience that transforms you into a better self</h2>
+      <div class="trainers-grid">
+
+        <!-- Heather -->
+        <div class="trainer-card">
+          <img class="trainer-photo" src="https://cdn.prod.website-files.com/62e94994afb1b23475fb3dbd/63bec6ca42064b5ca19d8375_heather-headshot.png" alt="Heather Downs" />
+          <h3 class="trainer-name">Heather Downs</h3>
+          <p class="trainer-role">CEO &amp; Personal Trainer</p>
+          <p class="trainer-bio">Heather's transformation leads to her career as a Personal Trainer and a Triathlon Coach. She has been a Personal Trainer for 11 years and a Triathlon Coach for seven years. Her dedication and passion for helping you achieve your goals are what shines when she is Training.</p>
+          <div class="trainer-meta">
+            <div class="trainer-meta-item"><strong>Favorite Sport</strong><span>Triathlon</span></div>
+            <div class="trainer-meta-item"><strong>Training Philosophy</strong><span>You don't get what you wish for; you get what you work for.</span></div>
+            <div class="trainer-meta-item"><strong>Fun Facts</strong><span>She loves animals, nature, and photography. Heather enjoys watching the world's beauty.</span></div>
+          </div>
+          <p class="certifications-title">Certifications</p>
+          <ul class="certifications-list">
+            <li>ACE Personal Trainer</li>
+            <li>ACE Sports Conditioning Specialist</li>
+            <li>NESTA Certified Sports Injury Specialist</li>
+            <li>NESTA Certified Lifestyle Weight Management Specialist</li>
+            <li>USA Triathlon Level 1 Coach</li>
+          </ul>
+        </div>
+
+        <!-- Leigh -->
+        <div class="trainer-card">
+          <img class="trainer-photo" src="https://cdn.prod.website-files.com/62e94994afb1b23475fb3dbd/6436fe80ffe91036cb33c8ae_leight-carter.jpg" alt="Leigh Carter" />
+          <h3 class="trainer-name">Leigh Carter</h3>
+          <p class="trainer-role">Yoga Instructor / Trainer</p>
+          <p class="trainer-bio">Leigh has been a Personal Trainer and Coach for 11 years. She holds certifications in Yoga and Indoor Cycling. Her love for fitness began with her own fitness journey. Although born in the United States, Leigh grew up in Central and South America and the West Indies, giving her a cross-cultural perspective on health and fitness.</p>
+          <div class="trainer-meta">
+            <div class="trainer-meta-item"><strong>Favorite Sport</strong><span>Basketball</span></div>
+            <div class="trainer-meta-item"><strong>Training Philosophy</strong><span>Fitness is for everyone. Goals and programs should be realistic, attainable, and fun.</span></div>
+            <div class="trainer-meta-item"><strong>Fun Facts</strong><span>Dedicated 12 years of volunteer work to animal rescue.</span></div>
+          </div>
+          <p class="certifications-title">Certifications</p>
+          <ul class="certifications-list">
+            <li>Fitour Yoga Instructor</li>
+            <li>Fitour Advanced Yoga Instructor</li>
+            <li>AFAA Personal Trainer Certification</li>
+            <li>NASM Certified Nutrition Coach</li>
+          </ul>
+        </div>
+
+        <!-- Addison -->
+        <div class="trainer-card">
+          <img class="trainer-photo" src="https://cdn.prod.website-files.com/62e94994afb1b23475fb3dbd/69a7221036ecc9d585b9e2d7_addison.jpg" alt="Addison Arneson" />
+          <h3 class="trainer-name">Addison Arneson</h3>
+          <p class="trainer-role">Personal Trainer</p>
+          <p class="trainer-bio">Addison was inspired to become a personal trainer after 12 years of gymnastics, three years of coaching, and teaching swim lessons. She brings an eye for detail and an attitude of encouragement. Currently pursuing a B.S. in Exercise Science and Kinesiology at the University of South Florida.</p>
+          <div class="trainer-meta">
+            <div class="trainer-meta-item"><strong>Favorite Sport</strong><span>Gymnastics</span></div>
+            <div class="trainer-meta-item"><strong>Training Philosophy</strong><span>Building healthy habits starts with a decision — the decision to choose yourself. It's not about perfection; it's about improvement.</span></div>
+            <div class="trainer-meta-item"><strong>Fun Facts</strong><span>Moved from Minnesota to Florida · Once dreamed of being a marine biologist · The beach is her happy place</span></div>
+          </div>
+          <p class="certifications-title">Certifications</p>
+          <ul class="certifications-list">
+            <li>NASM Certified Personal Trainer</li>
+            <li>American Red Cross Lifeguarding with CPR/AED</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="container">
+      <p class="section-label">Testimonials</p>
+      <h2 class="section-title">What some of our clients are saying!</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">Before working with JTF I was at a gym with a Trainer for a year and did not see the results I wanted. I've been working with JTF since December and have already lost 12 pounds and 3½ inches! Heather is great and really takes the time to understand you and your goals. Never the same workout and is always a good time!</p>
+          <p class="testimonial-author">— Joan R.</p>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">Heather knows how to encourage, when to push and when I need a break. If you're looking for a highly qualified, caring and professional personal trainer, I would highly recommend Heather.</p>
+          <p class="testimonial-author">— Arlene Z.</p>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">I am grateful that I found Maria to be my Personal Trainer. She is dedicated, energetic and an inspiring Trainer. She quickly got to know my needs and goals and weakness to improve. She pays attention to every single move to correct posture and ensure injuries do not occur.</p>
+          <p class="testimonial-author">— Mariela Labrador</p>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">It's never the same routine with Heather — plus, there is always some challenge which is very exciting. I am glad to have joined her triathlon group — after 8 weeks, my swimming skills have definitely improved.</p>
+          <p class="testimonial-author">— Simon Bensmail</p>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">Reggie is super knowledgeable and professional. He creates specific, well thought out, customized workouts that keep me engaged and focused. He is so in tune with the individual's goals and needs. Reggie motivates me and his training made me feel and look so much better.</p>
+          <p class="testimonial-author">— Valerie S.</p>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">Great Trainers and very professional! They are so encouraging and provide alternative moves for knees or back concerns. I would definitely recommend JTF for Personal Training and Group Fitness Classes! Week 6 and I am moving and feeling stronger. It's a journey not a race.</p>
+          <p class="testimonial-author">— Nerlande Joseph</p>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">Eric is a phenomenal Trainer! He is very professional, extremely approachable, and full of positive energy. Workouts are challenging but very customized to your goals and fitness level. I would recommend him to anyone I know!</p>
+          <p class="testimonial-author">— Kimberly Cheney</p>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">Reggie put me on a running and weight lifting program for football that helped me become all conference my senior year of high school, and nearly cut a second off my 40 time. His training sessions are directly tailored to your needs, and they just flat out work.</p>
+          <p class="testimonial-author">— Charlie C.</p>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">I've been working out for a year on my own and plateaued. So I decided to hire a Personal Trainer. Reggie has taught me a TON of things — diet, proper form, etc. So far I have gained 6.5 lbs in the last 2 months. I look forward to referring my friends and family to Reggie.</p>
+          <p class="testimonial-author">— Derek S.</p>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">I've been training for about a month with Reggie. I can already see definition in my arms. He's great at pinpointing your weak areas and working on them to make you stronger. I'm on a fitness journey to get toned for my wedding next year and I can't wait to see where I land.</p>
+          <p class="testimonial-author">— Puja P.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <p class="section-label">Contact Us</p>
+          <h2 class="section-title">How can we make your training a lifestyle?</h2>
+          <p>Ready to start your journey? Reach out and we'll help you find the right plan.</p>
+          <div class="contact-detail">
+            <span>📞</span>
+            <a href="tel:3864818225">(386) 481-8225</a>
+          </div>
+          <div class="contact-detail">
+            <span>✉️</span>
+            <a href="mailto:info@joythrufitness.com">info@joythrufitness.com</a>
+          </div>
+        </div>
+        <div class="contact-form">
+          <!-- Replace YOUR_FORM_ID with your Formspree form ID -->
+          <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" required />
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+            <div class="form-group">
+              <label for="package">Package Interest</label>
+              <select id="package" name="package">
+                <option value="">Select a package...</option>
+                <option>Personal Training — 1x/week</option>
+                <option>Personal Training — 2x/week</option>
+                <option>Personal Training — 3x/week</option>
+                <option>Personal Training — 4x/week</option>
+                <option>3 Months Mega Deal</option>
+                <option>Team Training</option>
+                <option>JOY Thru Triathlon</option>
+                <option>Group Classes</option>
+                <option>TIME 4 U Online Program</option>
+                <option>Swim / Cycling / Running</option>
+                <option>Other / Question</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" placeholder="Tell us about your goals..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%">Send Message</button>
+            <div class="form-success" id="formSuccess">Thank you! Your message has been received. We'll be in touch soon.</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <img src="https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/62e94994afb1b2f168fb3dd0_JTF-logo-white.png" alt="JOY Thru Fitness" />
+        </div>
+        <ul class="footer-nav">
+          <li><a href="#personal-training">Personal Training</a></li>
+          <li><a href="#dua-tri">Group Classes</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#trainers">Trainers</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <p class="footer-phone">386-481-8225</p>
+      </div>
+      <p class="footer-copy">Copyright &copy; 2026. All rights reserved. JOY Thru Fitness, LLC</p>
+    </div>
+  </footer>
+
+  <script>
+    // Nav toggle
+    const toggle = document.getElementById('navToggle');
+    const links = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+    // Nav shrink on scroll
+    window.addEventListener('scroll', () => {
+      document.querySelector('nav').style.height = window.scrollY > 60 ? '54px' : '64px';
+    });
+
+    // Contact form (Formspree AJAX)
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          form.reset();
+          document.getElementById('formSuccess').style.display = 'block';
+          btn.textContent = 'Sent!';
+        } else {
+          btn.textContent = 'Error — try again';
+          btn.disabled = false;
+        }
+      } catch {
+        btn.textContent = 'Error — try again';
+        btn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
