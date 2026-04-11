@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>JTF Site Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --orange:#e93e3a;--orange-dk:#c42e2a;--orange-lt:#fdf0ef;
+  --black:#111;--text:#222;--mid:#555;--light:#888;
+  --white:#fff;--gray:#f7f7f7;--border:#e0e0e0;
+  --sidebar:240px;
+  --fh:'Montserrat',sans-serif;--fb:'Open Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);color:var(--text);background:var(--gray);display:flex;min-height:100vh}
+/* PASSWORD WALL */
+#pw-wall{position:fixed;inset:0;background:var(--black);z-index:9999;display:flex;align-items:center;justify-content:center}
+#pw-box{background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:48px 40px;width:100%;max-width:360px;text-align:center}
+#pw-box h2{font-family:var(--fh);font-size:16px;font-weight:800;color:#fff;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+#pw-box p{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:28px}
+#pw-box input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:3px;padding:12px 16px;font-family:var(--fb);font-size:15px;color:#fff;outline:none;text-align:center;letter-spacing:.05em;transition:border-color .2s}
+#pw-box input:focus{border-color:var(--orange)}
+#pw-box button{margin-top:14px;width:100%;background:var(--orange);color:#fff;border:none;font-family:var(--fh);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:13px;border-radius:3px;cursor:pointer;transition:background .2s}
+#pw-box button:hover{background:var(--orange-dk)}
+#pw-error{font-size:12px;color:#e05555;margin-top:12px;min-height:18px}
+#app{display:none}
+
+/* SIDEBAR */
+#sidebar{
+  width:var(--sidebar);min-width:var(--sidebar);
+  background:var(--black);
+  position:fixed;top:0;left:0;bottom:0;
+  overflow-y:auto;z-index:100;
+  display:flex;flex-direction:column;
+}
+.sb-logo{
+  padding:24px 20px 18px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sb-logo span{
+  font-family:var(--fh);font-size:13px;font-weight:800;
+  color:#fff;letter-spacing:.06em;text-transform:uppercase;
+  display:block;line-height:1.3;
+}
+.sb-logo em{color:var(--orange);font-style:normal}
+.sb-subtitle{font-size:10px;color:rgba(255,255,255,.4);margin-top:4px;letter-spacing:.05em}
+nav{flex:1;padding:12px 0}
+nav a{
+  display:block;padding:10px 20px;
+  font-family:var(--fh);font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.5);text-decoration:none;
+  border-left:3px solid transparent;
+  transition:all .15s;
+}
+nav a:hover{color:#fff;background:rgba(255,255,255,.04)}
+nav a.active{color:#fff;border-left-color:var(--orange);background:rgba(233,62,58,.08)}
+.sb-download{
+  padding:16px;border-top:1px solid rgba(255,255,255,.08);
+}
+.sb-download button{
+  width:100%;background:var(--orange);color:#fff;border:none;
+  font-family:var(--fh);font-size:11px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:13px;border-radius:3px;cursor:pointer;
+  transition:background .2s;
+}
+.sb-download button:hover{background:var(--orange-dk)}
+
+/* MAIN */
+#main{
+  margin-left:var(--sidebar);
+  flex:1;padding:40px 48px;
+  max-width:860px;
+}
+
+/* TOP BAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:36px;padding-bottom:20px;
+  border-bottom:2px solid var(--border);
+}
+.topbar h1{
+  font-family:var(--fh);font-size:22px;font-weight:800;color:var(--text);
+}
+.topbar p{font-size:13px;color:var(--light);margin-top:3px}
+.dl-btn{
+  background:var(--orange);color:#fff;border:none;
+  font-family:var(--fh);font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  padding:13px 24px;border-radius:3px;cursor:pointer;
+  transition:background .2s;white-space:nowrap;
+}
+.dl-btn:hover{background:var(--orange-dk)}
+
+/* SECTIONS */
+.edit-section{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:6px;margin-bottom:28px;overflow:hidden;
+  scroll-margin-top:24px;
+}
+.es-header{
+  padding:18px 24px;background:var(--white);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  user-select:none;
+}
+.es-header:hover{background:var(--gray)}
+.es-icon{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--orange-lt);color:var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
+}
+.es-title{font-family:var(--fh);font-size:13px;font-weight:700;flex:1}
+.es-toggle{font-size:18px;color:var(--light);transition:transform .2s}
+.es-body{padding:24px;display:none}
+.es-body.open{display:block}
+
+/* FORM ELEMENTS */
+.field{margin-bottom:18px}
+.field label{
+  display:block;font-family:var(--fh);font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--text);
+  margin-bottom:6px;
+}
+.field .hint{font-size:12px;color:var(--light);font-style:italic;margin-bottom:6px;margin-top:-2px}
+.field input,.field textarea,.field select{
+  width:100%;padding:10px 13px;border:1px solid var(--border);
+  border-radius:3px;font-family:var(--fb);font-size:14px;
+  color:var(--text);background:var(--white);outline:none;
+  transition:border-color .2s;
+}
+.field input:focus,.field textarea:focus{border-color:var(--orange)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.6}
+.field textarea.tall{min-height:120px}
+.field textarea.short{min-height:60px}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* REPEATER blocks */
+.rep-block{
+  border:1px solid var(--border);border-radius:4px;
+  padding:18px;margin-bottom:14px;position:relative;
+  background:var(--gray);
+}
+.rep-block h4{
+  font-family:var(--fh);font-size:11px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--orange);
+  margin-bottom:14px;
+}
+
+/* SUB TABS (pricing) */
+.sub-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;flex-wrap:wrap}
+.sub-tab{
+  font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:9px 16px;cursor:pointer;
+  color:var(--light);border-bottom:2px solid transparent;margin-bottom:-2px;
+  background:none;border-top:none;border-left:none;border-right:none;
+  transition:all .2s;
+}
+.sub-tab:hover{color:var(--text)}
+.sub-tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+.sub-panel{display:none}.sub-panel.active{display:block}
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:28px;right:28px;z-index:999;
+  background:var(--black);color:#fff;
+  font-family:var(--fh);font-size:12px;font-weight:700;letter-spacing:.08em;
+  padding:14px 22px;border-radius:4px;border-left:4px solid var(--orange);
+  opacity:0;transform:translateY(12px);
+  transition:all .3s;pointer-events:none;
+}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* divider */
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+.add-btn{
+  background:none;border:2px dashed var(--border);color:var(--light);
+  font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:11px 20px;border-radius:3px;cursor:pointer;
+  width:100%;margin-top:4px;transition:all .2s;
+}
+.add-btn:hover{border-color:var(--orange);color:var(--orange)}
+.remove-btn{
+  position:absolute;top:14px;right:14px;
+  background:none;border:1px solid var(--border);color:var(--light);
+  font-size:11px;font-family:var(--fh);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;padding:5px 10px;border-radius:3px;cursor:pointer;
+  transition:all .2s;
+}
+.remove-btn:hover{border-color:#e05555;color:#e05555;background:#fff5f5}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD WALL -->
+<div id="pw-wall">
+  <div id="pw-box">
+    <h2>JTF Site Editor</h2>
+    <p>joythrufitness.com</p>
+    <input type="password" id="pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <button onclick="checkPw()">Unlock Editor</button>
+    <p id="pw-error"></p>
+  </div>
+</div>
+
+<!-- APP (hidden until unlocked) -->
+<div id="app" style="display:none;width:100%;display:none">
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sb-logo">
+    <span><em>JTF</em> Site Editor</span>
+    <div class="sb-subtitle">joythrufitness.com</div>
+  </div>
+  <nav id="sidenav">
+    <a href="#s-hero" class="active">🏠 Hero</a>
+    <a href="#s-mission">💬 Mission</a>
+    <a href="#s-pt">🏋️ Personal Training</a>
+    <a href="#s-t4u">⏱ Time 4 U</a>
+    <a href="#s-classes">👥 Group Classes</a>
+    <a href="#s-payment">💳 Payment</a>
+    <a href="#s-pricing">💰 Pricing</a>
+    <a href="#s-about">ℹ️ About</a>
+    <a href="#s-trainers">🧑‍🏫 Trainers</a>
+    <a href="#s-testimonials">⭐ Testimonials</a>
+    <a href="#s-contact">📞 Contact</a>
+  </nav>
+  <div class="sb-download">
+    <button onclick="downloadSite()">⬇ Download index.html</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main id="main">
+  <div class="topbar">
+    <div>
+      <h1>Site Content Editor</h1>
+      <p>Edit your website content below, then click Download to get your updated file.</p>
+    </div>
+    <button class="dl-btn" onclick="downloadSite()">⬇ Download index.html</button>
+  </div>
+
+  <!-- HERO -->
+  <div class="edit-section" id="s-hero">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">🏠</div>
+      <span class="es-title">Hero Section</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body open">
+      <div class="field">
+        <label>Headline</label>
+        <input type="text" id="hero_headline"/>
+      </div>
+      <div class="field">
+        <label>Hero Image Path</label>
+        <div class="hint">Relative path to image file, e.g. images/hero-image.jpg</div>
+        <input type="text" id="hero_image"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- MISSION -->
+  <div class="edit-section" id="s-mission">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">💬</div>
+      <span class="es-title">Mission Statement</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div class="field">
+        <label>Mission Text</label>
+        <textarea id="mission_text"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERSONAL TRAINING -->
+  <div class="edit-section" id="s-pt">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">🏋️</div>
+      <span class="es-title">Personal Training</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div class="field">
+        <label>Section Heading</label>
+        <input type="text" id="pt_heading"/>
+      </div>
+      <div class="field">
+        <label>Intro Paragraph 1</label>
+        <textarea id="pt_intro0" class="short"></textarea>
+      </div>
+      <div class="field">
+        <label>Intro Paragraph 2</label>
+        <textarea id="pt_intro1" class="short"></textarea>
+      </div>
+      <div class="field">
+        <label>Training Includes (one item per line)</label>
+        <textarea id="pt_items" class="tall"></textarea>
+      </div>
+      <div class="field">
+        <label>Image Path</label>
+        <input type="text" id="pt_image"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIME 4 U -->
+  <div class="edit-section" id="s-t4u">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">⏱</div>
+      <span class="es-title">Time 4 U Online Program</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div class="field">
+        <label>Heading</label>
+        <input type="text" id="t4u_heading"/>
+      </div>
+      <div class="field">
+        <label>Intro Text</label>
+        <textarea id="t4u_intro"></textarea>
+      </div>
+      <div class="field">
+        <label>What You'll Receive (one item per line)</label>
+        <textarea id="t4u_items" class="tall"></textarea>
+      </div>
+      <div class="field">
+        <label>Bottom Note</label>
+        <textarea id="t4u_note" class="short"></textarea>
+      </div>
+      <div class="field">
+        <label>Contact Email</label>
+        <input type="email" id="t4u_email"/>
+      </div>
+      <div class="field">
+        <label>Image Path</label>
+        <input type="text" id="t4u_image"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- GROUP CLASSES -->
+  <div class="edit-section" id="s-classes">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">👥</div>
+      <span class="es-title">Group Classes</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div class="row2">
+        <div class="field">
+          <label>Heading</label>
+          <input type="text" id="gc_heading"/>
+        </div>
+        <div class="field">
+          <label>Price Badge Text</label>
+          <input type="text" id="gc_badge"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Image Path</label>
+        <input type="text" id="gc_image"/>
+      </div>
+      <div class="field">
+        <label>Schedule URL</label>
+        <input type="text" id="gc_scheduleUrl"/>
+      </div>
+      <hr class="divider"/>
+      <div id="gc_classes_wrap"></div>
+    </div>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="edit-section" id="s-payment">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">💳</div>
+      <span class="es-title">Payment Info</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div class="row2">
+        <div class="field">
+          <label>Venmo Handle</label>
+          <input type="text" id="pay_venmo"/>
+        </div>
+        <div class="field">
+          <label>Zelle Number</label>
+          <input type="text" id="pay_zelle"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="edit-section" id="s-pricing">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">💰</div>
+      <span class="es-title">Pricing</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div class="field">
+        <label>Consult Note</label>
+        <input type="text" id="pr_consultNote"/>
+      </div>
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="subTab(this,'pr-individual')">Individual</button>
+        <button class="sub-tab" onclick="subTab(this,'pr-specials')">Specials</button>
+        <button class="sub-tab" onclick="subTab(this,'pr-team')">Team</button>
+        <button class="sub-tab" onclick="subTab(this,'pr-triathlon')">Triathlon</button>
+        <button class="sub-tab" onclick="subTab(this,'pr-sbr')">Swim/Bike/Run</button>
+      </div>
+
+      <!-- Individual -->
+      <div class="sub-panel active" id="pr-individual">
+        <p style="font-size:13px;color:var(--light);margin-bottom:16px">Prices per session per month</p>
+        <div id="pr_ind_wrap"></div>
+      </div>
+
+      <!-- Specials -->
+      <div class="sub-panel" id="pr-specials">
+        <div class="field">
+          <label>Note</label>
+          <input type="text" id="pr_sp_note"/>
+        </div>
+        <div id="pr_sp_wrap"></div>
+      </div>
+
+      <!-- Team -->
+      <div class="sub-panel" id="pr-team">
+        <div class="field">
+          <label>Note</label>
+          <input type="text" id="pr_tm_note"/>
+        </div>
+        <div id="pr_tm_wrap"></div>
+      </div>
+
+      <!-- Triathlon -->
+      <div class="sub-panel" id="pr-triathlon">
+        <div id="pr_tri_wrap"></div>
+      </div>
+
+      <!-- SBR -->
+      <div class="sub-panel" id="pr-sbr">
+        <div class="field">
+          <label>Note</label>
+          <input type="text" id="pr_sbr_note"/>
+        </div>
+        <div id="pr_sbr_wrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="edit-section" id="s-about">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">ℹ️</div>
+      <span class="es-title">About</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div class="field">
+        <label>Heading</label>
+        <input type="text" id="ab_heading"/>
+      </div>
+      <div class="field">
+        <label>Paragraph 1</label>
+        <textarea id="ab_p0"></textarea>
+      </div>
+      <div class="field">
+        <label>Paragraph 2</label>
+        <textarea id="ab_p1"></textarea>
+      </div>
+      <div class="field">
+        <label>Paragraph 3</label>
+        <textarea id="ab_p2"></textarea>
+      </div>
+      <div class="field">
+        <label>Image Path</label>
+        <input type="text" id="ab_image"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRAINERS -->
+  <div class="edit-section" id="s-trainers">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">🧑‍🏫</div>
+      <span class="es-title">Trainers</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div class="field">
+        <label>Section Heading</label>
+        <input type="text" id="tr_heading"/>
+      </div>
+      <div id="trainers_wrap"></div>
+      <button class="add-btn" onclick="addTrainer()">+ Add Trainer</button>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="edit-section" id="s-testimonials">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">⭐</div>
+      <span class="es-title">Testimonials</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div id="tes_wrap"></div>
+      <button class="add-btn" onclick="addTestimonial()">+ Add Testimonial</button>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="edit-section" id="s-contact">
+    <div class="es-header" onclick="toggle(this)">
+      <div class="es-icon">📞</div>
+      <span class="es-title">Contact Info</span>
+      <span class="es-toggle">▾</span>
+    </div>
+    <div class="es-body">
+      <div class="row2">
+        <div class="field">
+          <label>Phone</label>
+          <input type="text" id="ct_phone"/>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="ct_email"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Formspree Form ID</label>
+        <div class="hint">Get this from your Formspree account dashboard</div>
+        <input type="text" id="ct_formspreeId"/>
+      </div>
+      <div class="field">
+        <label>Section Heading</label>
+        <input type="text" id="ct_heading"/>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast">✓ index.html downloaded!</div>
+
+<script>
+// ── DEFAULT DATA (matches your S object) ──────────────────────────────────
+const DEFAULTS = {
+  images:{
+    logoNav:'images/JTF-logo.svg',
+    logoFoot:'images/JTF-logo.svg',
+    venmo:'https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/632a69f5018137f4752406ad_Venmo-Logo.png',
+    zelle:'https://cdn.prod.website-files.com/62e94994afb1b23f9afb3dc7/632a748bd018c2ba32f56e14_Zelle-logo.png'
+  },
+  hero:{headline:'Your Journey to Better Health and Fitness',image:'images/hero-image.jpg'},
+  mission:{label:'Mission',text:'JOY Thru Fitness customizes plans to empower our clients to take control of their lifestyles'},
+  pt:{
+    label:'Personal Training',heading:'Should I hire a personal trainer?',
+    intro:['Hiring a personal trainer is essential. The benefits are remarkable as they go a long way to guarantee that you reach your health and fitness goals. Some people initially get turned off to hiring a personal trainer when they reflect upon the cost or the fear of a trainer pushing them too hard.','We support, motivate, and guide you through this transformative journey.'],
+    listLabel:'Our training includes:',
+    items:['Paying close attention to individual training programs and nutrition habits such as customized programs','Arranging fitness assessments to measure strength and imbalances','Addressing fitness level and desired goals','Accountability','Form correction','Weekly flexibility and strength plans','Nutrition advice and goal setting','Unconditional professionalism to help you progress in developing a healthy lifestyle'],
+    btn:'Sign Up Today',btnHref:'#pricing',image:'images/personal-training.jpg'
+  },
+  t4u:{
+    label:'Time 4 U',heading:'Because lasting change starts when you finally make time for YOU.',
+    intro:"Life is full — but your health doesn't have to take a back seat. The TIME 4 U Online Program is designed for busy men and women who want structure, accountability, and expert coaching — all from the comfort of their own space. No more guessing. No more starting over every Monday.",
+    listLabel:"You'll receive:",
+    items:['Customized Workouts — Tailored to your goals, fitness level, and schedule','Weekly Check-Ins — Keep your progress on track with personalized feedback','Nutrition Coaching — Learn how to fuel your body without restriction or fad diets','24/6 Access to Your Coach — Support when you need it most','Private WhatsApp Community — Daily encouragement, accountability, and motivation','Monthly Team Zoom Calls — Celebrate wins and focused topic coaching','Time Management Strategies — Fit fitness into real life, not the other way around','Mindset Coaching — Build lasting habits and break free from the all-or-nothing cycle','Monthly Challenges — To keep you motivated, consistent and having fun'],
+    note:"This isn't a quick fix. It's a proven system to help you show up consistently, rebuild your confidence, and take back your health — one habit at a time.",
+    cta:'Ready to get started?',email:'info@joythrufitness.com',image:'images/time-4-u.jpg'
+  },
+  classes:{
+    label:'Group Classes',heading:'Exceed Your Expectations',
+    priceBadge:'$18 until May 5th · $20 after',
+    scheduleUrl:'https://www.vagaro.com/joythrufitness/classes',
+    image:'images/group-clases.jpg',
+    list:[
+      {name:'Full Bodyweight Workout',desc:'The most effective way to boost your metabolism, burn body fat, and gain strength with a variety of movements that work the major muscle groups. This class is for all fitness levels.'},
+      {name:'Core and More',desc:'This circuit style class will move you in different directions to improve balance, core stability, posture, fall prevention, and cardiovascular fitness. For all fitness levels.'},
+      {name:'Mat Pilates',desc:'Strongly core centric — Pilates is about lengthening, strengthening, and stability. Benefits include increased joint mobility, flexibility, balance, and improved posture. Grip socks and a mat are recommended.'},
+      {name:'Total Body Pump',desc:'A dynamic, metabolic circuit combining aerobic activity with strength training, burning fat and increasing muscle strength and endurance. More challenging but appropriate for all levels with modifications.'},
+      {name:'Aqua Aerobics',desc:'A total body class focusing on cardio and strength. Benefits include improved balance, core stability, less joint impact, and decreased stress. Fun, social, and ideal for everyone. Aqua shoes required.'}
+    ]
+  },
+  payment:{venmo:'@Heather-Downs76',zelle:'(386) 481-8225'},
+  pricing:{
+    consultNote:'Consult: 1 hour FREE · Over 1 hour: $30 per 30 minutes',
+    individual:[
+      {freq:'1x per week',rows:[{l:'60 min',v:'$76'},{l:'45 min',v:'$59'},{l:'30 min',v:'$45'}]},
+      {freq:'2x per week',rows:[{l:'60 min',v:'$70'},{l:'45 min',v:'$54'},{l:'30 min',v:'$43'}]},
+      {freq:'3x per week',rows:[{l:'60 min',v:'$65'},{l:'45 min',v:'$48'},{l:'30 min',v:'$37'}]},
+      {freq:'4x per week',rows:[{l:'60 min',v:'$59'},{l:'45 min',v:'$46'},{l:'30 min',v:'$34'}]}
+    ],
+    specials:{
+      title:'Personal Training — 1 Hour Specials',
+      note:'1 Hour Only · Prepaid · Limited Time',
+      deals:[
+        {freq:'1x per week · 12 sessions',price:'$779'},
+        {freq:'2x per week · 24 sessions',price:'$1,465'},
+        {freq:'3x per week · 36 sessions',price:'$2,099'}
+      ]
+    },
+    team:{
+      title:'Team Training — Monthly',note:'Split between two people',
+      groups:[
+        {freq:'1x per week',rows:[{l:'30 min',v:'$274'},{l:'45 min',v:'$329'},{l:'60 min',v:'$384'}]},
+        {freq:'2x per week',rows:[{l:'30 min',v:'$431'},{l:'45 min',v:'$647'},{l:'60 min',v:'$699'}]},
+        {freq:'3x per week',rows:[{l:'30 min',v:'$594'},{l:'45 min',v:'$783'},{l:'60 min',v:'$989'}]}
+      ]
+    },
+    triathlon:{
+      title:'JOY Thru Triathlon',
+      tiers:[
+        {label:'Basic',price:'$175',period:'per month',hi:false,feats:['Communication with Coach','Daily TrainingPeaks communication','Bi-weekly plans written','Zoom call once a month for race/event prep']},
+        {label:'Gold',price:'$225',period:'per month',hi:true,feats:['Daily communication with Coach','Weekly planning including schedule changes','Customized weekly plan + functional strength training','TrainingPeaks data analysis daily','Monthly Zoom 45 min — goals & planning','Nutrition consulting & periodization','Race event/prep']},
+        {label:'Platinum',price:'$285',period:'per month',hi:false,feats:['Unlimited communication with Coach','Unlimited planning including schedule changes','Customized weekly plan + functional strength training','1 in-person session/month — biomechanics analysis','Fitness & Skill Assessments included','TrainingPeaks data analysis daily','Monthly Zoom 45 min','Nutrition consulting & periodization','Race event/prep']}
+      ]
+    },
+    sbr:{
+      title:'Swim, Cycling & Running',note:'Video analysis included · Video Analysis Only: $40',
+      groups:[
+        {freq:'1x per week',rows:[{l:'60 min',v:'$76'},{l:'45 min',v:'$59'},{l:'30 min',v:'$48'}]},
+        {freq:'2x per week',rows:[{l:'60 min',v:'$72'},{l:'45 min',v:'$43'},{l:'30 min',v:'$55'}]}
+      ]
+    }
+  },
+  about:{
+    label:'About',heading:'Our passion is to give others their lives back',
+    paragraphs:['Heather had a dream of having her own Training business. Her vision is to help clients be successful in their training by providing excellent customer service, passion, and knowledge. Our business, JOY Thru Fitness, started six years ago.','We are Traveling Trainers passionate about helping clients of all ages and ethnicities live healthier lifestyles. Our intent behind traveling to you is that convenience is half the battle!','JOY Thru Fitness enjoys training youth to older adults. Our clients enjoy training with us because of our ethics, transparency, knowledge, and passion for helping others.'],
+    btn:'Meet the Team',btnHref:'#trainers',image:'images/about-us.jpg'
+  },
+  trainers:{
+    label:'Trainers',heading:'Knowledge and experience that transforms you into a better self',
+    people:[
+      {name:'Heather Downs',role:'CEO & Personal Trainer',photo:'images/heather-headshot.png',bio:"Heather's transformation leads to her career as a Personal Trainer and Triathlon Coach. She has been a Personal Trainer for 11 years and a Triathlon Coach for seven years. Her dedication and passion for helping you achieve your goals are what shines when she is training.",sport:'Triathlon',interests:'Heather appreciates diversity. She enjoys exploring and traveling to new places.',philosophy:"You don't get what you wish for; you get what you work for.",funfacts:'She loves animals, nature, and photography.',certs:['ACE Personal Trainer','ACE Sports Conditioning Specialist','NESTA Certified Sports Injury Specialist','NESTA Certified Lifestyle Weight Management Specialist','USA Triathlon Level 1 Coach']},
+      {name:'Leigh Carter',role:'Yoga Instructor / Trainer',photo:'images/leigh-headshot.jpg',bio:'Leigh has been a Personal Trainer and Coach for 11 years. She holds certifications in Yoga and Indoor Cycling. Although born in the US, Leigh grew up in Central and South America and the West Indies, giving her a cross-cultural perspective on health and fitness.',sport:'Basketball',interests:'Collecting old time radio broadcasts and painting.',philosophy:'Fitness is for everyone. Goals and programs should be realistic, attainable, and fun.',funfacts:'Dedicated 12 years of volunteer work to animal rescue.',certs:['Fitour Yoga Instructor','Fitour Advanced Yoga Instructor','AFAA Personal Trainer Certification','NASM Certified Nutrition Coach']},
+      {name:'Addison Arneson',role:'Personal Trainer',photo:'images/addison-headshot.jpg',bio:'Addison was inspired to become a personal trainer after 12 years of gymnastics, three years of coaching, and teaching swim lessons. Currently pursuing a B.S. in Exercise Science and Kinesiology at USF.',sport:'Gymnastics',interests:'Spending time in nature, reading, and exploring new places.',philosophy:"It's not about perfection; it's about improvement.",funfacts:'Moved from Minnesota · Once dreamed of being a marine biologist · The beach is her happy place.',certs:['NASM Certified Personal Trainer','American Red Cross Lifeguarding with CPR/AED']}
+    ]
+  },
+  testimonials:{
+    label:'Testimonials',heading:'What some of our clients are saying!',
+    items:[
+      {q:"Before working with JTF I was at a gym with a Trainer for a year and did not see the results I wanted. I've been working with JTF since December and have already lost 12 pounds and 3½ inches! Heather is great and really takes the time to understand you and your goals.",a:'Joan R.'},
+      {q:'Heather knows how to encourage, when to push and when I need a break. If you\'re looking for a highly qualified, caring and professional personal trainer, I would highly recommend Heather.',a:'Arlene Z.'},
+      {q:'I am grateful that I found Maria to be my Personal Trainer. She is dedicated, energetic and an inspiring Trainer. She quickly got to know my needs and goals. She pays attention to every single move to correct posture and be sure injuries do not occur.',a:'Mariela Labrador'},
+      {q:"It's never the same routine with Heather — plus, there is always some challenge which is very exciting. I am glad to have joined her triathlon group — after 8 weeks, my swimming skills have definitely improved.",a:'Simon Bensmail'},
+      {q:'Reggie is super knowledgeable and professional. He creates specific, well thought out, customized workouts that keep me engaged and focused. Reggie motivates me and his training made me feel and look so much better.',a:'Valerie S.'},
+      {q:'Great Trainers and very professional! They are so encouraging and provide alternative moves for knees or back concerns. I would definitely recommend JTF for Personal Training and Group Fitness Classes! Week 6 and I am moving and feeling stronger.',a:'Nerlande Joseph'},
+      {q:'Eric is a phenomenal Trainer! He is very professional, extremely approachable, and full of positive energy. Workouts are challenging but very customized to your goals and fitness level.',a:'Kimberly Cheney'},
+      {q:"Reggie put me on a running and weight lifting program for football that helped me become all-conference my senior year of high school, and nearly cut a second off my 40 time. His sessions are directly tailored to your needs.",a:'Charlie C.'},
+      {q:"I've been working out for a year on my own and plateaued. So I decided to hire a Personal Trainer. Reggie has taught me a TON of things — diet, proper form, etc. So far I have gained 6.5 lbs in the last 2 months.",a:'Derek S.'},
+      {q:"I've been training for about a month with Reggie. I can already see definition in my arms. He's great at pinpointing your weak areas and working on them. I'm training to get toned for my wedding next year.",a:'Puja P.'}
+    ]
+  },
+  contact:{
+    label:'Contact Us',heading:'How can we make your training a lifestyle?',
+    phone:'386-481-8225',email:'info@joythrufitness.com',
+    formspreeId:'YOUR_FORM_ID',
+    packages:['Personal Training — 1x/week','Personal Training — 2x/week','Personal Training — 3x/week','Personal Training — 4x/week','3 Months Mega Deal','Team Training','JOY Thru Triathlon','Group Classes','TIME 4 U Online Program','Swim / Cycling / Running','Other / Question']
+  }
+};
+
+// ── POPULATE FORMS ────────────────────────────────────────────────────────
+function val(id, v){ const el=document.getElementById(id); if(el) el.value=v||''; }
+
+function buildGcClasses(list){
+  const w=document.getElementById('gc_classes_wrap'); w.innerHTML='';
+  list.forEach((c,i)=>{
+    w.innerHTML+=`
+    <div class="rep-block">
+      <h4>Class ${i+1}</h4>
+      <div class="field"><label>Class Name</label><input type="text" id="gc_name_${i}" value="${esc(c.name)}"/></div>
+      <div class="field"><label>Description</label><textarea id="gc_desc_${i}" class="short">${esc(c.desc)}</textarea></div>
+    </div>`;
+  });
+}
+
+function buildPricingIndividual(groups){
+  const w=document.getElementById('pr_ind_wrap'); w.innerHTML='';
+  groups.forEach((g,i)=>{
+    w.innerHTML+=`
+    <div class="rep-block">
+      <h4>${g.freq}</h4>
+      <div class="row3">
+        ${g.rows.map((r,j)=>`<div class="field"><label>${r.l}</label><input type="text" id="pr_ind_${i}_${j}" value="${esc(r.v)}"/></div>`).join('')}
+      </div>
+    </div>`;
+  });
+}
+
+function buildPricingSpecials(sp){
+  const w=document.getElementById('pr_sp_wrap'); w.innerHTML='';
+  sp.deals.forEach((d,i)=>{
+    w.innerHTML+=`
+    <div class="rep-block">
+      <h4>Deal ${i+1}</h4>
+      <div class="row2">
+        <div class="field"><label>Label</label><input type="text" id="pr_sp_freq_${i}" value="${esc(d.freq)}"/></div>
+        <div class="field"><label>Price</label><input type="text" id="pr_sp_price_${i}" value="${esc(d.price)}"/></div>
+      </div>
+    </div>`;
+  });
+}
+
+function buildPricingTeam(tm){
+  const w=document.getElementById('pr_tm_wrap'); w.innerHTML='';
+  tm.groups.forEach((g,i)=>{
+    w.innerHTML+=`
+    <div class="rep-block">
+      <h4>${g.freq}</h4>
+      <div class="row3">
+        ${g.rows.map((r,j)=>`<div class="field"><label>${r.l}</label><input type="text" id="pr_tm_${i}_${j}" value="${esc(r.v)}"/></div>`).join('')}
+      </div>
+    </div>`;
+  });
+}
+
+function buildPricingTriathlon(tri){
+  const w=document.getElementById('pr_tri_wrap'); w.innerHTML='';
+  tri.tiers.forEach((t,i)=>{
+    w.innerHTML+=`
+    <div class="rep-block">
+      <h4>${t.label} Tier</h4>
+      <div class="row3">
+        <div class="field"><label>Tier Name</label><input type="text" id="pr_tri_label_${i}" value="${esc(t.label)}"/></div>
+        <div class="field"><label>Price</label><input type="text" id="pr_tri_price_${i}" value="${esc(t.price)}"/></div>
+        <div class="field"><label>Period</label><input type="text" id="pr_tri_period_${i}" value="${esc(t.period)}"/></div>
+      </div>
+      <div class="field"><label>Features (one per line)</label><textarea id="pr_tri_feats_${i}">${t.feats.join('\n')}</textarea></div>
+    </div>`;
+  });
+}
+
+function buildPricingSBR(sbr){
+  const w=document.getElementById('pr_sbr_wrap'); w.innerHTML='';
+  sbr.groups.forEach((g,i)=>{
+    w.innerHTML+=`
+    <div class="rep-block">
+      <h4>${g.freq}</h4>
+      <div class="row3">
+        ${g.rows.map((r,j)=>`<div class="field"><label>${r.l}</label><input type="text" id="pr_sbr_${i}_${j}" value="${esc(r.v)}"/></div>`).join('')}
+      </div>
+    </div>`;
+  });
+}
+
+let trainerCount = 0;
+let testimonialCount = 0;
+
+function buildTrainers(people){
+  const w=document.getElementById('trainers_wrap'); w.innerHTML='';
+  trainerCount = people.length;
+  people.forEach((p,i)=> renderTrainer(i, p));
+}
+
+function renderTrainer(i, p={}){
+  const w=document.getElementById('trainers_wrap');
+  const block=document.createElement('div');
+  block.className='rep-block';
+  block.id=`tr_block_${i}`;
+  block.innerHTML=`
+    <button class="remove-btn" onclick="removeTrainer(${i})">✕ Remove</button>
+    <h4>Trainer ${i+1}</h4>
+    <div class="row2">
+      <div class="field"><label>Name</label><input type="text" id="tr_name_${i}" value="${esc(p.name||'')}"/></div>
+      <div class="field"><label>Role / Title</label><input type="text" id="tr_role_${i}" value="${esc(p.role||'')}"/></div>
+    </div>
+    <div class="field"><label>Photo Path</label><input type="text" id="tr_photo_${i}" value="${esc(p.photo||'')}"/></div>
+    <div class="field"><label>Bio</label><textarea id="tr_bio_${i}">${esc(p.bio||'')}</textarea></div>
+    <div class="row2">
+      <div class="field"><label>Favorite Sport</label><input type="text" id="tr_sport_${i}" value="${esc(p.sport||'')}"/></div>
+      <div class="field"><label>Interests</label><input type="text" id="tr_interests_${i}" value="${esc(p.interests||'')}"/></div>
+    </div>
+    <div class="field"><label>Training Philosophy</label><input type="text" id="tr_philosophy_${i}" value="${esc(p.philosophy||'')}"/></div>
+    <div class="field"><label>Fun Facts</label><input type="text" id="tr_funfacts_${i}" value="${esc(p.funfacts||'')}"/></div>
+    <div class="field"><label>Certifications (one per line)</label><textarea id="tr_certs_${i}">${(p.certs||[]).join('\n')}</textarea></div>`;
+  w.appendChild(block);
+}
+
+function addTrainer(){
+  renderTrainer(trainerCount, {});
+  trainerCount++;
+}
+
+function removeTrainer(i){
+  const block = document.getElementById(`tr_block_${i}`);
+  if(block) block.remove();
+}
+
+function buildTestimonials(items){
+  const w=document.getElementById('tes_wrap'); w.innerHTML='';
+  testimonialCount = items.length;
+  items.forEach((t,i)=> renderTestimonial(i, t));
+}
+
+function renderTestimonial(i, t={}){
+  const w=document.getElementById('tes_wrap');
+  const block=document.createElement('div');
+  block.className='rep-block';
+  block.id=`tes_block_${i}`;
+  block.innerHTML=`
+    <button class="remove-btn" onclick="removeTestimonial(${i})">✕ Remove</button>
+    <h4>Testimonial ${i+1}</h4>
+    <div class="field"><label>Quote</label><textarea id="tes_q_${i}" class="short">${esc(t.q||'')}</textarea></div>
+    <div class="field"><label>Name</label><input type="text" id="tes_a_${i}" value="${esc(t.a||'')}"/></div>`;
+  w.appendChild(block);
+}
+
+function addTestimonial(){
+  renderTestimonial(testimonialCount, {});
+  testimonialCount++;
+}
+
+function removeTestimonial(i){
+  const block = document.getElementById(`tes_block_${i}`);
+  if(block) block.remove();
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function populate(D){
+  val('hero_headline', D.hero.headline);
+  val('hero_image', D.hero.image);
+  val('mission_text', D.mission.text);
+  val('pt_heading', D.pt.heading);
+  val('pt_intro0', D.pt.intro[0]);
+  val('pt_intro1', D.pt.intro[1]);
+  val('pt_items', D.pt.items.join('\n'));
+  val('pt_image', D.pt.image);
+  val('t4u_heading', D.t4u.heading);
+  val('t4u_intro', D.t4u.intro);
+  val('t4u_items', D.t4u.items.join('\n'));
+  val('t4u_note', D.t4u.note);
+  val('t4u_email', D.t4u.email);
+  val('t4u_image', D.t4u.image);
+  val('gc_heading', D.classes.heading);
+  val('gc_badge', D.classes.priceBadge);
+  val('gc_image', D.classes.image);
+  val('gc_scheduleUrl', D.classes.scheduleUrl);
+  buildGcClasses(D.classes.list);
+  val('pay_venmo', D.payment.venmo);
+  val('pay_zelle', D.payment.zelle);
+  val('pr_consultNote', D.pricing.consultNote);
+  buildPricingIndividual(D.pricing.individual);
+  val('pr_sp_note', D.pricing.specials.note);
+  buildPricingSpecials(D.pricing.specials);
+  val('pr_tm_note', D.pricing.team.note);
+  buildPricingTeam(D.pricing.team);
+  buildPricingTriathlon(D.pricing.triathlon);
+  val('pr_sbr_note', D.pricing.sbr.note);
+  buildPricingSBR(D.pricing.sbr);
+  val('ab_heading', D.about.heading);
+  val('ab_p0', D.about.paragraphs[0]);
+  val('ab_p1', D.about.paragraphs[1]);
+  val('ab_p2', D.about.paragraphs[2]);
+  val('ab_image', D.about.image);
+  val('tr_heading', D.trainers.heading);
+  buildTrainers(D.trainers.people);
+  buildTestimonials(D.testimonials.items);
+  val('ct_phone', D.contact.phone);
+  val('ct_email', D.contact.email);
+  val('ct_formspreeId', D.contact.formspreeId);
+  val('ct_heading', D.contact.heading);
+}
+
+// ── READ FORM BACK INTO S ────────────────────────────────────────────────
+function g(id){ const el=document.getElementById(id); return el ? el.value.trim() : ''; }
+function lines(id){ return g(id).split('\n').map(s=>s.trim()).filter(Boolean); }
+
+function readS(){
+  const D = JSON.parse(JSON.stringify(DEFAULTS)); // deep clone structure
+
+  D.hero.headline = g('hero_headline');
+  D.hero.image = g('hero_image');
+  D.mission.text = g('mission_text');
+  D.pt.heading = g('pt_heading');
+  D.pt.intro = [g('pt_intro0'), g('pt_intro1')];
+  D.pt.items = lines('pt_items');
+  D.pt.image = g('pt_image');
+  D.t4u.heading = g('t4u_heading');
+  D.t4u.intro = g('t4u_intro');
+  D.t4u.items = lines('t4u_items');
+  D.t4u.note = g('t4u_note');
+  D.t4u.email = g('t4u_email');
+  D.t4u.image = g('t4u_image');
+  D.classes.heading = g('gc_heading');
+  D.classes.priceBadge = g('gc_badge');
+  D.classes.image = g('gc_image');
+  D.classes.scheduleUrl = g('gc_scheduleUrl');
+  D.classes.list = D.classes.list.map((_,i)=>({name:g(`gc_name_${i}`),desc:g(`gc_desc_${i}`)}));
+  D.payment.venmo = g('pay_venmo');
+  D.payment.zelle = g('pay_zelle');
+  D.pricing.consultNote = g('pr_consultNote');
+  D.pricing.individual = D.pricing.individual.map((grp,i)=>({
+    freq:grp.freq,
+    rows:grp.rows.map((r,j)=>({l:r.l, v:g(`pr_ind_${i}_${j}`)}))
+  }));
+  D.pricing.specials.note = g('pr_sp_note');
+  D.pricing.specials.deals = D.pricing.specials.deals.map((_,i)=>({
+    freq:g(`pr_sp_freq_${i}`), price:g(`pr_sp_price_${i}`)
+  }));
+  D.pricing.team.note = g('pr_tm_note');
+  D.pricing.team.groups = D.pricing.team.groups.map((grp,i)=>({
+    freq:grp.freq,
+    rows:grp.rows.map((r,j)=>({l:r.l, v:g(`pr_tm_${i}_${j}`)}))
+  }));
+  D.pricing.triathlon.tiers = D.pricing.triathlon.tiers.map((t,i)=>({
+    label:g(`pr_tri_label_${i}`), price:g(`pr_tri_price_${i}`),
+    period:g(`pr_tri_period_${i}`), hi:t.hi,
+    feats:lines(`pr_tri_feats_${i}`)
+  }));
+  D.pricing.sbr.note = g('pr_sbr_note');
+  D.pricing.sbr.groups = D.pricing.sbr.groups.map((grp,i)=>({
+    freq:grp.freq,
+    rows:grp.rows.map((r,j)=>({l:r.l, v:g(`pr_sbr_${i}_${j}`)}))
+  }));
+  D.about.heading = g('ab_heading');
+  D.about.paragraphs = [g('ab_p0'),g('ab_p1'),g('ab_p2')];
+  D.about.image = g('ab_image');
+  D.trainers.heading = g('tr_heading');
+  D.trainers.people = Array.from(document.querySelectorAll('#trainers_wrap .rep-block')).map(block=>{
+    const i = block.id.replace('tr_block_','');
+    return {
+      name:g(`tr_name_${i}`), role:g(`tr_role_${i}`), photo:g(`tr_photo_${i}`),
+      bio:g(`tr_bio_${i}`), sport:g(`tr_sport_${i}`), interests:g(`tr_interests_${i}`),
+      philosophy:g(`tr_philosophy_${i}`), funfacts:g(`tr_funfacts_${i}`),
+      certs:lines(`tr_certs_${i}`)
+    };
+  });
+  D.testimonials.items = Array.from(document.querySelectorAll('#tes_wrap .rep-block')).map(block=>{
+    const i = block.id.replace('tes_block_','');
+    return { q:g(`tes_q_${i}`), a:g(`tes_a_${i}`) };
+  });
+  D.contact.phone = g('ct_phone');
+  D.contact.email = g('ct_email');
+  D.contact.formspreeId = g('ct_formspreeId');
+  D.contact.heading = g('ct_heading');
+
+  return D;
+}
+
+// ── DOWNLOAD ─────────────────────────────────────────────────────────────
+function downloadSite(){
+  const S = readS();
+  const sBlock = 'const S = ' + JSON.stringify(S, null, 2) + ';';
+  const html = INDEX_TEMPLATE.replace('/*__S_PLACEHOLDER__*/', sBlock);
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'index.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── UI HELPERS ────────────────────────────────────────────────────────────
+function toggle(header){
+  const body = header.nextElementSibling;
+  const icon = header.querySelector('.es-toggle');
+  body.classList.toggle('open');
+  icon.style.transform = body.classList.contains('open') ? '' : 'rotate(-90deg)';
+}
+
+function subTab(btn, panelId){
+  btn.closest('.es-body').querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  btn.closest('.es-body').querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// Sidebar active link on scroll
+const sections = document.querySelectorAll('.edit-section');
+const navLinks  = document.querySelectorAll('#sidenav a');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{ if(window.scrollY >= s.offsetTop-80) current='#'+s.id; });
+  navLinks.forEach(a=>{ a.classList.toggle('active', a.getAttribute('href')===current); });
+},{passive:true});
+
+// ── INDEX.HTML TEMPLATE ───────────────────────────────────────────────────
+// Full index.html with S object replaced by placeholder
+const INDEX_TEMPLATE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Joy Thru Fitness</title>
+<meta name="description" content="JOY Thru Fitness — Personal training, group classes, triathlon coaching."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --orange:#e93e3a;--orange-dk:#c42e2a;--orange-lt:#fdf0ef;
+  --black:#111;--text:#222;--mid:#555;--light:#888;
+  --white:#fff;--gray:#f6f6f6;--border:#e0e0e0;
+  --fh:'Montserrat',sans-serif;--fb:'Open Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);color:var(--text);background:var(--white);overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:0 32px}
+.section{padding:88px 0;scroll-margin-top:70px}
+.bg-gray{background:var(--gray)}
+.bg-white{background:var(--white)}
+.label{font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);margin-bottom:12px}
+.heading{font-family:var(--fh);font-size:clamp(24px,4vw,38px);font-weight:800;line-height:1.15;color:var(--text);margin-bottom:20px}
+.body-text{font-size:15px;line-height:1.8;color:var(--mid);margin-bottom:14px}
+.btn{display:inline-block;font-family:var(--fh);font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:13px 28px;border-radius:3px;border:2px solid transparent;cursor:pointer;transition:all .2s}
+.btn-green{background:var(--orange);color:#fff;border-color:var(--orange)}
+.btn-green:hover{background:var(--orange-dk);border-color:var(--orange-dk)}
+.btn-orange{background:var(--orange);color:#fff;border-color:var(--orange)}
+.btn-orange:hover{background:var(--orange-dk);border-color:var(--orange-dk)}
+.btn-outline{background:transparent;color:#fff;border-color:rgba(255,255,255,.7)}
+.btn-outline:hover{background:rgba(255,255,255,.1);border-color:#fff}
+.btn-outline-dark{background:transparent;color:var(--text);border-color:var(--text)}
+.btn-outline-dark:hover{background:var(--text);color:#fff}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:68px;align-items:center}
+.split-img img{width:100%;height:460px;object-fit:cover;border-radius:4px}
+.klist{list-style:none;margin:14px 0 26px}
+.klist li{font-size:14px;color:var(--mid);padding:7px 0 7px 20px;border-bottom:1px solid var(--border);position:relative;line-height:1.5}
+.klist li:last-child{border-bottom:none}
+.klist li::before{content:'';position:absolute;left:0;top:17px;width:7px;height:2px;background:var(--orange)}
+#nav{position:fixed;top:0;left:0;width:100%;z-index:999;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 6px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:68px;transition:height .25s}
+#nav.scrolled{height:54px}
+.nav-logo img{height:36px}
+.nav-links{display:flex;gap:20px;list-style:none}
+.nav-links a{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#333;transition:color .2s}
+.nav-links a:hover{color:var(--orange)}
+.nav-burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.nav-burger span{display:block;width:24px;height:2px;background:#333}
+#hero{height:100vh;position:relative;display:flex;align-items:center;justify-content:flex-end;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background-size:cover;background-position:left top;background-repeat:no-repeat;background-color:#ebebeb}
+.hero-content{position:relative;z-index:1;padding:0 60px 0 24px;max-width:540px;text-align:right}
+.hero-content h1{font-family:var(--fh);font-size:clamp(28px,4vw,54px);font-weight:800;line-height:1.1;text-transform:uppercase;color:var(--text);margin-bottom:32px}
+.hero-btns{display:flex;gap:14px;justify-content:flex-end;flex-wrap:wrap}
+#mission{background:var(--gray);padding:68px 0;text-align:center}
+#mission .heading{max-width:760px;margin:0 auto}
+.t4u-list{list-style:none;margin:14px 0 20px}
+.t4u-list li{font-size:14px;color:var(--mid);padding:7px 0 7px 24px;border-bottom:1px solid var(--border);line-height:1.5;position:relative}
+.t4u-list li:last-child{border-bottom:none}
+.t4u-list li::before{content:'\\2713';position:absolute;left:0;top:7px;color:var(--orange);font-size:14px;font-weight:700;line-height:1.5}
+.t4u-note{font-size:13px;color:var(--light);font-style:italic;margin-top:10px}
+.price-badge{display:inline-block;background:var(--orange);color:#fff;font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px;border-radius:3px;margin-bottom:22px}
+.class-item{padding:15px 0;border-bottom:1px solid var(--border)}
+.class-item:last-of-type{border-bottom:none}
+.class-item h4{font-family:var(--fh);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.class-item p{font-size:14px;color:var(--mid);line-height:1.65}
+#payment{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:28px 0}
+.pay-row{display:flex;align-items:center;gap:44px;flex-wrap:wrap}
+.pay-item{display:flex;align-items:center;gap:14px}
+.pay-item img{height:26px}
+.pay-item span{font-size:14px;color:var(--mid)}
+.pr-tabs{display:flex;gap:0;flex-wrap:wrap;border-bottom:2px solid var(--border);margin-bottom:40px}
+.pr-tab{font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:12px 20px;cursor:pointer;color:var(--light);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none}
+.pr-tab:hover{color:var(--text)}
+.pr-tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+.pr-panel{display:none}
+.pr-panel.active{display:block}
+.pr-block{margin-bottom:48px}
+.pr-block:last-child{margin-bottom:0}
+.pr-title{font-family:var(--fh);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding-bottom:12px;border-bottom:2px solid var(--orange);margin-bottom:8px}
+.pr-note{font-size:13px;color:var(--light);font-style:italic;margin-bottom:24px}
+.pr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.pc{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:24px 20px}
+.pc.hi{border-color:var(--orange);border-width:2px}
+.pc-freq{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);margin-bottom:5px}
+.pc-title{font-family:var(--fh);font-size:15px;font-weight:800;margin-bottom:16px;color:var(--text)}
+.pc-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.pc-row:last-child{border-bottom:none}
+.pc-row-l{color:var(--mid)}
+.pc-row-v{font-family:var(--fh);font-weight:700;color:var(--text)}
+.pc-price{font-family:var(--fh);font-size:40px;font-weight:800;color:var(--orange);line-height:1;margin-bottom:4px}
+.pc-period{font-size:12px;color:var(--light);margin-bottom:16px}
+.pc-feats{list-style:none}
+.pc-feats li{font-size:13px;color:var(--mid);padding:6px 0 6px 18px;border-bottom:1px solid var(--border);line-height:1.4;position:relative}
+.pc-feats li:last-child{border-bottom:none}
+.pc-feats li::before{content:'\\2713';position:absolute;left:0;color:var(--orange);font-weight:700}
+.t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:52px}
+.t-card{background:var(--white);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.t-photo{width:100%;height:300px;object-fit:cover;object-position:top}
+.t-body{padding:22px}
+.t-name{font-family:var(--fh);font-size:19px;font-weight:800;margin-bottom:3px}
+.t-role{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:14px}
+.t-bio{font-size:14px;line-height:1.7;color:var(--mid);margin-bottom:16px}
+.t-meta{margin-bottom:10px}
+.t-meta strong{display:block;font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:1px}
+.t-meta span{font-size:13px;color:var(--mid)}
+.certs-title{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin:14px 0 7px}
+.certs-list{list-style:none}
+.certs-list li{font-size:13px;color:var(--mid);padding:4px 0 4px 13px;position:relative;line-height:1.4}
+.certs-list li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:2px;background:var(--orange)}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.test-card{background:var(--gray);border:1px solid var(--border);border-radius:4px;padding:26px}
+.test-card::before{content:'\\201C';font-family:Georgia,serif;font-size:52px;line-height:1;color:var(--orange);opacity:.3;display:block;margin-bottom:6px}
+.test-q{font-size:14px;color:var(--mid);line-height:1.75;margin-bottom:16px}
+.test-a{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--text);letter-spacing:.08em;text-transform:uppercase}
+.contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:72px;align-items:start}
+.c-detail{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.c-icon{width:34px;height:34px;border-radius:50%;background:var(--orange-lt);color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.c-detail a,.c-detail span{font-size:14px;color:var(--mid)}
+.c-detail a:hover{color:var(--orange)}
+.fg{margin-bottom:16px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg label{display:block;font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin-bottom:6px}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:3px;font-family:var(--fb);font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--orange)}
+.fg textarea{resize:vertical;min-height:100px}
+.form-ok{display:none;background:var(--orange-lt);color:var(--orange-dk);border:1px solid var(--orange);padding:12px 16px;border-radius:3px;font-size:14px;margin-top:12px}
+footer{background:var(--black);color:rgba(255,255,255,.6);padding:44px 0 26px}
+.foot-inner{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:28px;margin-bottom:36px}
+.foot-logo img{height:42px}
+.foot-nav{list-style:none;display:flex;flex-wrap:wrap;gap:18px}
+.foot-nav a{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);transition:color .2s}
+.foot-nav a:hover{color:var(--orange)}
+.foot-phone{font-size:14px}
+.foot-copy{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;font-size:12px;text-align:center}
+@media(max-width:960px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:14px 32px 22px;gap:16px}
+  .nav-links.open{display:flex}
+  .nav-burger{display:flex}
+  #hero{justify-content:center}
+  .hero-content{text-align:center;padding:0 24px}
+  .hero-btns{justify-content:center}
+  .split{grid-template-columns:1fr}
+  .split-img img{height:240px}
+  .t-grid{grid-template-columns:1fr}
+  .test-grid{grid-template-columns:1fr 1fr}
+  .pr-grid{grid-template-columns:1fr 1fr}
+  .contact-grid{grid-template-columns:1fr;gap:36px}
+  .foot-inner{flex-direction:column}
+}
+@media(max-width:560px){
+  .container{padding:0 20px}
+  #nav{padding:0 20px}
+  .test-grid,.pr-grid,.fr{grid-template-columns:1fr}
+  .hero-btns{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+<script>
+/*__S_PLACEHOLDER__*/
+<\/script>
+<nav id="nav">
+  <a href="#hero" class="nav-logo"><img id="logo-nav" alt="JOY Thru Fitness"/></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#personal-training">Personal Training</a></li>
+    <li><a href="#online-programs">Online Programs</a></li>
+    <li><a href="#dua-tri">Group Classes</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#trainers">Trainers</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
+    <li><a href="#contact">Contact Us</a></li>
+  </ul>
+  <button class="nav-burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<section id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-content">
+    <h1 id="heroH"></h1>
+    <div class="hero-btns">
+      <a href="#about" class="btn btn-outline-dark">Learn More</a>
+      <a href="#pricing" class="btn btn-orange">Plans &amp; Pricing</a>
+    </div>
+  </div>
+</section>
+<section id="mission">
+  <div class="container">
+    <p class="label" id="mLabel"></p>
+    <h2 class="heading" id="mText"></h2>
+  </div>
+</section>
+<section id="personal-training" class="section bg-white">
+  <div class="container">
+    <div class="split">
+      <div id="ptText"></div>
+      <div class="split-img"><img id="ptImg" alt="Personal Training"/></div>
+    </div>
+  </div>
+</section>
+<section id="online-programs" class="section bg-gray">
+  <div class="container">
+    <div class="split">
+      <div id="t4uText"></div>
+      <div class="split-img"><img id="t4uImg" alt="Time 4 U"/></div>
+    </div>
+  </div>
+</section>
+<section id="dua-tri" class="section bg-white">
+  <div class="container">
+    <div class="split">
+      <div class="split-img"><img id="classImg" alt="Group Classes"/></div>
+      <div id="classText"></div>
+    </div>
+  </div>
+</section>
+<div id="payment">
+  <div class="container"><div class="pay-row" id="payRow"></div></div>
+</div>
+<section id="pricing" class="section bg-gray">
+  <div class="container">
+    <p class="label">Pricing</p>
+    <h2 class="heading">Personal Training</h2>
+    <div class="pr-tabs" id="prTabs"></div>
+    <div id="pricingInner"></div>
+  </div>
+</section>
+<section id="about" class="section bg-white">
+  <div class="container">
+    <div class="split">
+      <div id="aboutText"></div>
+      <div class="split-img"><img id="aboutImg" alt="About JOY Thru Fitness"/></div>
+    </div>
+  </div>
+</section>
+<section id="trainers" class="section bg-gray">
+  <div class="container">
+    <p class="label" id="trlLabel"></p>
+    <h2 class="heading" id="trlHeading"></h2>
+    <div class="t-grid" id="trlGrid"></div>
+  </div>
+</section>
+<section id="testimonials" class="section bg-white">
+  <div class="container">
+    <p class="label" id="tesLabel"></p>
+    <h2 class="heading" id="tesHeading"></h2>
+    <div class="test-grid" id="tesGrid"></div>
+  </div>
+</section>
+<section id="contact" class="section bg-gray">
+  <div class="container">
+    <div class="contact-grid">
+      <div id="ctInfo"></div>
+      <div id="ctForm"></div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="container">
+    <div class="foot-inner">
+      <div class="foot-logo"><img id="logo-foot" alt="JOY Thru Fitness"/></div>
+      <ul class="foot-nav">
+        <li><a href="#personal-training">Personal Training</a></li>
+        <li><a href="#dua-tri">Group Classes</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#trainers">Trainers</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <p class="foot-phone" id="footPhone"></p>
+    </div>
+    <p class="foot-copy">Copyright &copy; 2026. All rights reserved. JOY Thru Fitness, LLC</p>
+  </div>
+</footer>
+<script>
+(()=>{
+  const $=id=>document.getElementById(id);
+  const rows=arr=>arr.map(r=>\`<div class="pc-row"><span class="pc-row-l">\${r.l}<\/span><span class="pc-row-v">\${r.v}<\/span><\/div>\`).join('');
+  $('logo-nav').src=S.images.logoNav;
+  $('logo-foot').src=S.images.logoFoot;
+  $('heroBg').style.backgroundImage=\`url('\${S.hero.image}')\`;
+  $('heroH').textContent=S.hero.headline;
+  $('mLabel').textContent=S.mission.label;
+  $('mText').textContent=S.mission.text;
+  const pt=S.pt;
+  $('ptImg').src=pt.image;
+  $('ptText').innerHTML=\`<p class="label">\${pt.label}<\/p><h2 class="heading">\${pt.heading}<\/h2>\${pt.intro.map(p=>\`<p class="body-text">\${p}<\/p>\`).join('')}<p class="body-text"><strong>\${pt.listLabel}<\/strong><\/p><ul class="klist">\${pt.items.map(i=>\`<li>\${i}<\/li>\`).join('')}<\/ul><a href="\${pt.btnHref}" class="btn btn-green">\${pt.btn}<\/a>\`;
+  const t=S.t4u;
+  $('t4uImg').src=t.image;
+  $('t4uText').innerHTML=\`<p class="label">\${t.label}<\/p><h2 class="heading">\${t.heading}<\/h2><p class="body-text">\${t.intro}<\/p><p class="body-text"><strong>\${t.listLabel}<\/strong><\/p><ul class="t4u-list">\${t.items.map(i=>\`<li>\${i}<\/li>\`).join('')}<\/ul><p class="t4u-note">\${t.note}<\/p><p class="body-text" style="margin-top:14px"><strong>\${t.cta}<\/strong> Email <a href="mailto:\${t.email}" style="color:var(--orange)">\${t.email}<\/a><\/p>\`;
+  const gc=S.classes;
+  $('classImg').src=gc.image;
+  $('classText').innerHTML=\`<p class="label">\${gc.label}<\/p><h2 class="heading">\${gc.heading}<\/h2><span class="price-badge">\${gc.priceBadge}<\/span>\${gc.list.map(c=>\`<div class="class-item"><h4>\${c.name}<\/h4><p>\${c.desc}<\/p><\/div>\`).join('')}<br/><a href="\${gc.scheduleUrl}" class="btn btn-green" target="_blank" rel="noopener">See Schedules<\/a>\`;
+  $('payRow').innerHTML=\`<div class="pay-item"><img src="\${S.images.venmo}" alt="Venmo"/><span>\${S.payment.venmo}<\/span><\/div><div class="pay-item"><img src="\${S.images.zelle}" alt="Zelle"/><span>\${S.payment.zelle}<\/span><\/div>\`;
+  const pr=S.pricing;
+  const tabs=[{label:'Individual'},{label:'Specials'},{label:'Team'},{label:'Triathlon'},{label:'Swim / Bike / Run'}];
+  $('prTabs').innerHTML=tabs.map((t,i)=>\`<button class="pr-tab\${i===0?' active':''}" data-tab="\${i}">\${t.label}<\/button>\`).join('');
+  const panels=[];
+  let p0=\`<p class="pr-note">\${pr.consultNote}<\/p><div class="pr-grid">\`;
+  pr.individual.forEach(g=>{p0+=\`<div class="pc"><p class="pc-freq">\${g.freq}<\/p><p class="pc-title">Individual<\/p>\${rows(g.rows)}<\/div>\`;});
+  p0+=\`<\/div>\`;panels.push(p0);
+  const sp=pr.specials;
+  let p1=\`<p class="pr-note">\${sp.note}<\/p><div class="pr-grid">\`;
+  sp.deals.forEach(d=>{p1+=\`<div class="pc hi"><p class="pc-freq">\${d.freq}<\/p><p class="pc-title">3 Months Mega Deal<\/p><p class="pc-price">\${d.price}<\/p><\/div>\`;});
+  p1+=\`<\/div>\`;panels.push(p1);
+  const tm=pr.team;
+  let p2=\`<p class="pr-note">\${tm.note}<\/p><div class="pr-grid">\`;
+  tm.groups.forEach(g=>{p2+=\`<div class="pc"><p class="pc-freq">\${g.freq}<\/p><p class="pc-title">Team<\/p>\${rows(g.rows)}<\/div>\`;});
+  p2+=\`<\/div>\`;panels.push(p2);
+  const tri=pr.triathlon;
+  let p3=\`<div class="pr-grid">\`;
+  tri.tiers.forEach(t=>{p3+=\`<div class="pc\${t.hi?' hi':''}"><p class="pc-freq">\${t.label}<\/p><p class="pc-price">\${t.price}<\/p><p class="pc-period">\${t.period}<\/p><ul class="pc-feats">\${t.feats.map(f=>\`<li>\${f}<\/li>\`).join('')}<\/ul><\/div>\`;});
+  p3+=\`<\/div>\`;panels.push(p3);
+  const sbr=pr.sbr;
+  let p4=\`<p class="pr-note">\${sbr.note}<\/p><div class="pr-grid">\`;
+  sbr.groups.forEach(g=>{p4+=\`<div class="pc"><p class="pc-freq">\${g.freq}<\/p><p class="pc-title">Individual<\/p>\${rows(g.rows)}<\/div>\`;});
+  p4+=\`<\/div>\`;panels.push(p4);
+  $('pricingInner').innerHTML=panels.map((p,i)=>\`<div class="pr-panel\${i===0?' active':''}" data-panel="\${i}">\${p}<\/div>\`).join('');
+  $('prTabs').addEventListener('click',e=>{
+    const btn=e.target.closest('.pr-tab');if(!btn)return;
+    const idx=btn.dataset.tab;
+    document.querySelectorAll('.pr-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.pr-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector(\`.pr-panel[data-panel="\${idx}"]\`).classList.add('active');
+  });
+  const ab=S.about;
+  $('aboutImg').src=ab.image;
+  $('aboutText').innerHTML=\`<p class="label">\${ab.label}<\/p><h2 class="heading">\${ab.heading}<\/h2>\${ab.paragraphs.map(p=>\`<p class="body-text">\${p}<\/p>\`).join('')}<a href="\${ab.btnHref}" class="btn btn-green" style="margin-top:6px">\${ab.btn}<\/a>\`;
+  $('trlLabel').textContent=S.trainers.label;
+  $('trlHeading').textContent=S.trainers.heading;
+  $('trlGrid').innerHTML=S.trainers.people.map(p=>\`<div class="t-card"><img class="t-photo" src="\${p.photo}" alt="\${p.name}"/><div class="t-body"><h3 class="t-name">\${p.name}<\/h3><p class="t-role">\${p.role}<\/p><p class="t-bio">\${p.bio}<\/p><div class="t-meta"><strong>Favorite Sport<\/strong><span>\${p.sport}<\/span><\/div><div class="t-meta"><strong>Interests<\/strong><span>\${p.interests}<\/span><\/div><div class="t-meta"><strong>Training Philosophy<\/strong><span>\${p.philosophy}<\/span><\/div><div class="t-meta"><strong>Fun Facts<\/strong><span>\${p.funfacts}<\/span><\/div><p class="certs-title">Certifications<\/p><ul class="certs-list">\${p.certs.map(c=>\`<li>\${c}<\/li>\`).join('')}<\/ul><\/div><\/div>\`).join('');
+  $('tesLabel').textContent=S.testimonials.label;
+  $('tesHeading').textContent=S.testimonials.heading;
+  $('tesGrid').innerHTML=S.testimonials.items.map(t=>\`<div class="test-card"><p class="test-q">\${t.q}<\/p><p class="test-a">— \${t.a}<\/p><\/div>\`).join('');
+  const ct=S.contact;
+  $('footPhone').textContent=ct.phone;
+  $('ctInfo').innerHTML=\`<p class="label">\${ct.label}<\/p><h2 class="heading">\${ct.heading}<\/h2><p class="body-text">Ready to start your journey? Reach out and we'll help you find the right plan.<\/p><div class="c-detail"><span class="c-icon">📞<\/span><a href="tel:\${ct.phone.replace(/-/g,'')}">\${ct.phone}<\/a><\/div><div class="c-detail"><span class="c-icon">✉️<\/span><a href="mailto:\${ct.email}">\${ct.email}<\/a><\/div>\`;
+  $('ctForm').innerHTML=\`<form id="theForm" action="https://formspree.io/f/\${ct.formspreeId}" method="POST"><div class="fr"><div class="fg"><label>First Name<\/label><input type="text" name="firstName" required/><\/div><div class="fg"><label>Last Name<\/label><input type="text" name="lastName" required/><\/div><\/div><div class="fg"><label>Email Address<\/label><input type="email" name="email" required/><\/div><div class="fg"><label>Package Interest<\/label><select name="package"><option value="">Select a package…<\/option>\${ct.packages.map(o=>\`<option>\${o}<\/option>\`).join('')}<\/select><\/div><div class="fg"><label>Message<\/label><textarea name="message" placeholder="Tell us about your goals…"><\/textarea><\/div><button type="submit" class="btn btn-green" style="width:100%">Send Message<\/button><div class="form-ok" id="formOk">Thank you! Your message has been received. We'll be in touch soon.<\/div><\/form>\`;
+  const burger=$('burger'),navLinks=$('navLinks');
+  burger.addEventListener('click',()=>navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+  window.addEventListener('scroll',()=>$('nav').classList.toggle('scrolled',scrollY>60));
+  document.addEventListener('submit',async e=>{
+    if(e.target.id!=='theForm')return;
+    e.preventDefault();
+    const btn=e.target.querySelector('button[type=submit]');
+    btn.textContent='Sending…';btn.disabled=true;
+    try{
+      const r=await fetch(e.target.action,{method:'POST',body:new FormData(e.target),headers:{'Accept':'application/json'}});
+      if(r.ok){e.target.reset();$('formOk').style.display='block';btn.textContent='Sent!';}
+      else{btn.textContent='Error — try again';btn.disabled=false;}
+    }catch{btn.textContent='Error — try again';btn.disabled=false;}
+  });
+})();
+<\/script>
+</body>
+</html>`;
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+populate(DEFAULTS);
+</script>
+
+</div><!-- /#app -->
+
+<script>
+// ── PASSWORD WALL ─────────────────────────────────────────────────────────
+const HASH = '44c5bef5f844454a4040f478430a36c7adba2e2ddf0493c267f010e5e2dc3977';
+
+async function checkPw(){
+  const input = document.getElementById('pw-input').value;
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+  const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(hash === HASH){
+    document.getElementById('pw-wall').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+  } else {
+    const err = document.getElementById('pw-error');
+    err.textContent = 'Incorrect password. Try again.';
+    document.getElementById('pw-input').value = '';
+    setTimeout(()=>err.textContent='', 3000);
+  }
+}
+</script>
+</body>
+</html>
